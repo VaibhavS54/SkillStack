@@ -20,7 +20,7 @@ await connectDB();
 await connectCloudinary();
 // middlewares
 app.use(cors({
-  origin: ['http://localhost:5173'], // add your deployed domain here
+  origin: ['http://localhost:5173','https://skill-stack-mc81.vercel.app'], // add your deployed domain here
   credentials: true
 }));
 
