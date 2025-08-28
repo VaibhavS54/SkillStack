@@ -5,7 +5,7 @@ import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { AppContext } from "../../context/AppContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
-import tutorLogo from "../../assets/tutor.png";
+import skill from "../../assets/skill.png";
 
 function Navbar() {
   const location = useLocation(); // ✅ useLocation instead of window.location
@@ -51,7 +51,7 @@ function Navbar() {
       {/* Logo */}
       <img
         onClick={() => navigate("/")}
-        src={tutorLogo}
+        src={skill}
         alt="TutorGrid Logo"
         className="w-28 lg:w-32 cursor-pointer"
       />

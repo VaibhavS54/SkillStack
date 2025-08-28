@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import uniqid from "uniqid";
 import Quill from "quill";
 import { assets } from "../../assets/assets";
-import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -17,7 +16,7 @@ function AddCourse() {
   const [chapters, setChapters] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
-  const {backendUrl, getToken} = useContext(AppContext);
+  const { backendUrl, getToken } = useContext(AppContext);
 
   const [lectureDetails, setLectureDetails] = useState({
     lectureTitle: "",
@@ -37,9 +36,7 @@ function AddCourse() {
           chapterContent: [],
           collapsed: false,
           chapterOrder:
-            chapters.length > 0
-              ? chapters.slice(-1)[0].chapterOrder + 1
-              : 1,
+            chapters.length > 0 ? chapters.slice(-1)[0].chapterOrder + 1 : 1,
         };
         setChapters([...chapters, newChapter]);
       }
@@ -57,19 +54,17 @@ function AddCourse() {
       );
     }
   };
-  
 
-  //Handle lectures
+  // 📌 Handle lectures
   const handleLecture = (action, chapterId, lectureIndex) => {
     if (action === "add") {
-      console.log("Opening popup for chapter:", chapterId);
       setCurrentChapterId(chapterId);
       setShowPopup(true);
     } else if (action === "remove") {
       setChapters(
         chapters.map((chapter) => {
-          if(chapter.chapterId === chapterId) {
-            chapter.chapterContent.splice(lectureIndex,1)
+          if (chapter.chapterId === chapterId) {
+            chapter.chapterContent.splice(lectureIndex, 1);
           }
           return chapter;
         })
@@ -78,49 +73,47 @@ function AddCourse() {
   };
 
   const addLecture = () => {
-  if (!lectureDetails.lectureTitle || !lectureDetails.lectureUrl) {
-    alert("Please fill in lecture title and URL");
-    return;
-  }
+    if (!lectureDetails.lectureTitle || !lectureDetails.lectureUrl) {
+      alert("Please fill in lecture title and URL");
+      return;
+    }
 
-  setChapters((prevChapters) =>
-    prevChapters.map((chapter) => {
-      if (chapter.chapterId === currentChapterId) {
-        const lastLecture = chapter.chapterContent.slice(-1)[0];
-        const nextOrder = lastLecture ? lastLecture.lectureOrder + 1 : 1;
+    setChapters((prevChapters) =>
+      prevChapters.map((chapter) => {
+        if (chapter.chapterId === currentChapterId) {
+          const lastLecture = chapter.chapterContent.slice(-1)[0];
+          const nextOrder = lastLecture ? lastLecture.lectureOrder + 1 : 1;
 
-        const newLecture = {
-          ...lectureDetails,
-          lectureId: uniqid(),
-          lectureOrder: nextOrder,
-        };
+          const newLecture = {
+            ...lectureDetails,
+            lectureId: uniqid(),
+            lectureOrder: nextOrder,
+          };
 
-        return {
-          ...chapter,
-          chapterContent: [...chapter.chapterContent, newLecture],
-        };
-      }
-      return chapter;
-    })
-  );
+          return {
+            ...chapter,
+            chapterContent: [...chapter.chapterContent, newLecture],
+          };
+        }
+        return chapter;
+      })
+    );
 
-  // ✅ Reset form & close popup
-  setLectureDetails({
-    lectureTitle: "",
-    lectureDuration: "",
-    lectureUrl: "", // ✅ fixed here
-    isPreviewFree: false,
-  });
-  setShowPopup(false);
-};
-
-
+    // Reset form & close popup
+    setLectureDetails({
+      lectureTitle: "",
+      lectureDuration: "",
+      lectureUrl: "",
+      isPreviewFree: false,
+    });
+    setShowPopup(false);
+  };
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      if(!image){
-        toast.error('Thumbnail is required')
+      if (!image) {
+        toast.error("Thumbnail is required");
       }
       const courseData = {
         courseTitle,
@@ -131,38 +124,35 @@ function AddCourse() {
       };
 
       const formData = new FormData();
-      formData.append('courseData', JSON.stringify(courseData));
-      formData.append('image', image);
+      formData.append("courseData", JSON.stringify(courseData));
+      formData.append("image", image);
 
       const token = await getToken();
 
       const { data } = await axios.post(
-        backendUrl + '/api/educator/add-course',
+        backendUrl + "/api/educator/add-course",
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
-      )
-      console.log(data);
-      
-      if(data.success){
+      );
+      if (data.success) {
         toast.success(data.message);
-        setCourseTitle('');
-        setCoursePrice(0)
-        setDiscount(0)
-        setImage(null)
-        setChapters([])
-        quillRef.current.root.innerHTML = ""
-      }else{
+        setCourseTitle("");
+        setCoursePrice(0);
+        setDiscount(0);
+        setImage(null);
+        setChapters([]);
+        quillRef.current.root.innerHTML = "";
+      } else {
         toast.error(data.message);
       }
-
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
-  }
+  };
 
   //  Initialize Quill editor
   useEffect(() => {
@@ -174,12 +164,10 @@ function AddCourse() {
   }, []);
 
   return (
-    <div className="h-screen overflow-scroll flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
-      {/* ✅ Added styling to form */}
+    <div className="h-screen overflow-scroll flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       <form
         onSubmit={handleSubmit}
-        action=""
-        className="bg-white shadow-lg rounded-lg p-6 w-fit max-w-4xl space-y-6"
+        className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 w-fit max-w-4xl space-y-6 text-gray-800 dark:text-gray-100 transition-colors duration-300"
       >
         {/* Course Title */}
         <div className="flex flex-col gap-1">
@@ -189,7 +177,7 @@ function AddCourse() {
             value={courseTitle}
             type="text"
             placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-300 focus:ring-2 focus:ring-blue-300"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-400"
             required
           />
         </div>
@@ -199,7 +187,7 @@ function AddCourse() {
           <p className="font-semibold">Course Description</p>
           <div
             ref={editorRef}
-            className="border border-gray-300 rounded p-2 min-h-[100px]"
+            className="border border-gray-300 dark:border-gray-700 rounded p-2 min-h-[100px] bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
           ></div>
         </div>
 
@@ -212,14 +200,17 @@ function AddCourse() {
               value={coursePrice}
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-300 focus:ring-2 focus:ring-blue-300"
+              className="outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
 
           <div className="flex md:flex-row flex-col items-center gap-3">
             <p className="font-semibold">Course Thumbnail</p>
-            <label htmlFor="thumbnailImage" className="flex items-center gap-3">
+            <label
+              htmlFor="thumbnailImage"
+              className="flex items-center gap-3 cursor-pointer"
+            >
               <img
                 src={assets.file_upload_icon}
                 alt=""
@@ -233,7 +224,7 @@ function AddCourse() {
                 hidden
               />
               <img
-                className="max-h-10 rounded border"
+                className="max-h-10 rounded border dark:border-gray-700"
                 src={image ? URL.createObjectURL(image) : ""}
                 alt=""
               />
@@ -251,7 +242,7 @@ function AddCourse() {
             placeholder="0"
             min={0}
             max={100}
-            className="outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-300 focus:ring-2 focus:ring-blue-300"
+            className="outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-400"
             required
           />
         </div>
@@ -259,8 +250,11 @@ function AddCourse() {
         {/* Chapters & Lectures */}
         <div className="space-y-4">
           {chapters.map((chapter, chapterIndex) => (
-            <div key={chapterIndex} className="bg-gray-50 border rounded-lg">
-              <div className="flex justify-between items-center p-4 border-b">
+            <div
+              key={chapterIndex}
+              className="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg transition-colors"
+            >
+              <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
                 <div className="flex items-center">
                   <img
                     src={assets.dropdown_icon}
@@ -275,7 +269,7 @@ function AddCourse() {
                     {chapterIndex + 1} {chapter.chapterTitle}
                   </span>
                 </div>
-                <span className="text-gray-500">
+                <span className="text-gray-500 dark:text-gray-400">
                   {chapter.chapterContent.length} Lectures
                 </span>
                 <img
@@ -294,8 +288,8 @@ function AddCourse() {
                       className="flex items-center justify-between mb-2"
                     >
                       <span>
-                        {lectureIndex + 1}. {lecture.lectureTitle} - 
-                        {lecture.lectureDuration} mins 
+                        {lectureIndex + 1}. {lecture.lectureTitle} -{" "}
+                        {lecture.lectureDuration} mins{" "}
                         <a
                           href={lecture.lectureUrl}
                           target="_blank"
@@ -303,7 +297,7 @@ function AddCourse() {
                           className="text-blue-500"
                         >
                           Link
-                        </a>
+                        </a>{" "}
                         - {lecture.isPreviewFree ? "Free Preview" : "Paid"}
                       </span>
                       <img
@@ -322,7 +316,7 @@ function AddCourse() {
                   ))}
                   <div
                     onClick={() => handleLecture("add", chapter.chapterId)}
-                    className="inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2 hover:bg-gray-200"
+                    className="inline-flex bg-gray-100 dark:bg-gray-700 p-2 rounded cursor-pointer mt-2 hover:bg-gray-200 dark:hover:bg-gray-600"
                   >
                     + Add Lecture
                   </div>
@@ -334,15 +328,15 @@ function AddCourse() {
           {/* Add Chapter */}
           <div
             onClick={() => handleChapter("add")}
-            className="flex justify-center items-center bg-blue-100 p-2 rounded-lg cursor-pointer hover:bg-blue-200"
+            className="flex justify-center items-center bg-blue-100 dark:bg-blue-900 p-2 rounded-lg cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800"
           >
             + Add Chapter
           </div>
 
           {/* Popup for adding lecture */}
           {showPopup && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-              <div className="bg-white text-gray-700 p-4 rounded relative w-full max-w-80 shadow-lg">
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 dark:bg-black dark:bg-opacity-60">
+              <div className="bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-100 p-4 rounded relative w-full max-w-80 shadow-lg">
                 <h2 className="text-lg font-semibold">Add Lecture</h2>
 
                 {/* Lecture Title */}
@@ -350,7 +344,7 @@ function AddCourse() {
                   <p>Lecture Title</p>
                   <input
                     type="text"
-                    className="mt-1 block w-full border rounded py-1 px-2"
+                    className="mt-1 block w-full border rounded py-1 px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                     value={lectureDetails.lectureTitle}
                     onChange={(e) =>
                       setLectureDetails({
@@ -366,7 +360,7 @@ function AddCourse() {
                   <p>Duration (minutes)</p>
                   <input
                     type="number"
-                    className="mt-1 block w-full border rounded py-1 px-2"
+                    className="mt-1 block w-full border rounded py-1 px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                     value={lectureDetails.lectureDuration}
                     onChange={(e) =>
                       setLectureDetails({
@@ -382,7 +376,7 @@ function AddCourse() {
                   <p>Lecture URL</p>
                   <input
                     type="text"
-                    className="mt-1 block w-full border rounded py-1 px-2"
+                    className="mt-1 block w-full border rounded py-1 px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                     value={lectureDetails.lectureUrl}
                     onChange={(e) =>
                       setLectureDetails({
@@ -412,7 +406,7 @@ function AddCourse() {
                 {/* Add Lecture Button */}
                 <button
                   type="button"
-                  className="w-full bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500"
+                  className="w-full bg-blue-400 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 dark:hover:bg-blue-700"
                   onClick={addLecture}
                 >
                   Add
@@ -433,7 +427,7 @@ function AddCourse() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="bg-black text-white w-max py-2.5 px-8 rounded my-4 hover:bg-gray-900"
+          className="bg-black dark:bg-blue-600 text-white w-max py-2.5 px-8 rounded my-4 hover:bg-gray-900 dark:hover:bg-blue-700"
         >
           ADD
         </button>
