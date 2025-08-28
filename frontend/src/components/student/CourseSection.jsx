@@ -4,23 +4,37 @@ import Coursecard from "./Coursecard";
 import { AppContext } from "../../context/AppContext";
 
 const CourseSection = () => {
-  const {allcourses}  = useContext(AppContext);  
+  const { allcourses } = useContext(AppContext);
+
   return (
-    <div className="py-16 md:px-40 px-8">
-      <h2 className="text-3xl font-medium text-gray-800">Learn from the best</h2>
-      <p className="text-sm md:text-base text-grav-500 mt-3">
+    <div className="py-20 md:px-40 px-8 bg-gray-50">
+      {/* Heading */}
+      <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center">
+        Learn from the Best
+      </h2>
+      <p className="text-sm md:text-base text-gray-600 mt-3 text-center max-w-2xl mx-auto">
         Discover our top-rated courses across various categories. From coding
         and design to business and wellness, our courses are crafted to deliver
         results.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 px-4 md:px-0 gap-4 md:my-16 my-10">
-        {allcourses.slice(0, 4).map((course,index) => <Coursecard key={index} course={course} />)}
+      {/* Course Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:my-16 my-10">
+        {allcourses.slice(0, 4).map((course, index) => (
+          <Coursecard key={index} course={course} />
+        ))}
       </div>
 
-      <Link to={"/course-list"} onClick={() => scrollTo(0, 0)} className="text-gray-500 border border-gray-500/20 rounded px-10 py-3 rounded ">
-        Show all courses
-      </Link>
+      {/* CTA Button */}
+      <div className="text-center">
+        <Link
+          to={"/course-list"}
+          onClick={() => scrollTo(0, 0)}
+          className="inline-block text-indigo-600 font-medium border border-indigo-300 hover:border-indigo-500 hover:bg-indigo-600 hover:text-white transition px-8 py-3 rounded-lg shadow-sm"
+        >
+          Show All Courses
+        </Link>
+      </div>
     </div>
   );
 };

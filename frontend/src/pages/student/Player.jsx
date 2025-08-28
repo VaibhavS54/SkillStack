@@ -142,31 +142,31 @@ const Player = () => {
 
   return courseData ? (
     <>
-      <div className="p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36">
+      <div className="p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36 bg-gray-50 min-h-screen">
         {/* Left Column */}
         <div className="md:mt-10">
           {playerData ? (
-            <div>
+            <div className="bg-white shadow-md rounded-xl overflow-hidden">
               <YouTube
                 videoId={playerData.lectureUrl.split("/").pop()}
                 opts={{ playerVars: { autoplay: 1 } }}
                 iframeClassName="w-full aspect-video"
               />
-              <div className="flex items-center justify-between mt-4">
-                <p>
+              <div className="flex items-center justify-between p-4 border-t">
+                <p className="text-gray-800 font-medium">
                   {playerData.chapter}.{playerData.lecture}{" "}
                   {playerData.lectureTitle}
                 </p>
                 <button
                   disabled={!progressData}
                   onClick={() => markLectureAsCompleted(playerData.lectureId)}
-                  className={`text-blue-500 ${
-                    !progressData && "opacity-50 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-1 rounded-lg text-sm font-medium transition-colors ${
+                    progressData?.lectureCompleted?.includes(playerData.lectureId)
+                      ? "bg-green-500 text-white cursor-default"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:opacity-90"
+                  } ${!progressData && "opacity-50 cursor-not-allowed"}`}
                 >
-                  {progressData?.lectureCompleted?.includes(
-                    playerData.lectureId
-                  )
+                  {progressData?.lectureCompleted?.includes(playerData.lectureId)
                     ? "Completed"
                     : "Mark Completed"}
                 </button>
@@ -176,22 +176,22 @@ const Player = () => {
             <img
               src={courseData?.courseThumbnail || ""}
               alt=""
-              className="w-full"
+              className="w-full rounded-xl shadow-md"
             />
           )}
         </div>
 
         {/* Right Column */}
         <div className="text-gray-800">
-          <h2 className="text-xl font-semibold">Course Structure</h2>
-          <div className="pt-5">
+          <h2 className="text-2xl font-bold mb-4">📚 Course Structure</h2>
+          <div className="space-y-3">
             {courseData.courseContent.map((chapter, index) => (
               <div
                 key={index}
-                className="border border-gray-300 bg-white mb-2 rounded"
+                className="shadow-md bg-white rounded-xl overflow-hidden border border-gray-100"
               >
                 <div
-                  className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+                  className="flex items-center justify-between px-5 py-3 bg-gray-50 hover:bg-gray-100 cursor-pointer select-none transition"
                   onClick={() => toggleSection(index)}
                 >
                   <div className="flex items-center space-x-2">
@@ -202,12 +202,12 @@ const Player = () => {
                       src={assets.down_arrow_icon}
                       alt=""
                     />
-                    <p className="font-medium md:text-base text-sm">
+                    <p className="font-semibold md:text-base text-sm">
                       {chapter.chapterTitle}
                     </p>
                   </div>
-                  <p className="text-sm md:text-default">
-                    {chapter.chapterContent.length} Lectures -{" "}
+                  <p className="text-sm text-gray-600">
+                    {chapter.chapterContent.length} Lectures •{" "}
                     {calculateChapterTiming(chapter)}
                   </p>
                 </div>
@@ -217,11 +217,11 @@ const Player = () => {
                     openSection[index] ? "max-h-screen" : "max-h-0"
                   }`}
                 >
-                  <ul className="list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300">
+                  <ul className="md:pl-10 pl-4 pr-4 py-3 text-gray-700 border-t border-gray-200 space-y-1">
                     {chapter.chapterContent.map((lecture, lectureIndex) => (
                       <li
                         key={lectureIndex}
-                        className="flex items-start gap-2 py-1 hover:bg-gray-100 cursor-pointer"
+                        className="flex items-start gap-3 py-2 px-2 hover:bg-indigo-50 transition rounded-md cursor-pointer"
                       >
                         <img
                           src={
@@ -234,9 +234,9 @@ const Player = () => {
                           alt=""
                           className="w-4 h-4 mt-1"
                         />
-                        <div className="flex items-center justify-between w-full text-gray-800 text-xs md:text-default">
-                          <p>{lecture.lectureTitle}</p>
-                          <div className="flex gap-2">
+                        <div className="flex items-center justify-between w-full text-sm md:text-base">
+                          <p className="font-medium">{lecture.lectureTitle}</p>
+                          <div className="flex gap-3 items-center">
                             {lecture.lectureUrl && (
                               <p
                                 onClick={() =>
@@ -246,12 +246,12 @@ const Player = () => {
                                     lecture: lectureIndex + 1,
                                   })
                                 }
-                                className="text-blue-500 cursor-pointer"
+                                className="text-indigo-600 font-semibold hover:underline cursor-pointer"
                               >
-                                Watch
+                                ▶ Watch
                               </p>
                             )}
-                            <p className="text-gray-500">
+                            <p className="text-gray-500 text-xs">
                               {humanizeDuration(
                                 lecture.lectureDuration * 60 * 1000,
                                 { units: ["h", "m"] }
@@ -267,8 +267,8 @@ const Player = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 py-3 mt-10">
-            <h1 className="text-xl font-bold">Rate this Course</h1>
+          <div className="flex items-center gap-3 py-5 mt-8 border-t border-gray-200">
+            <h1 className="text-xl font-bold">⭐ Rate this Course</h1>
             <Rating initialRating={initialRating} onRate={handleRate} />
           </div>
         </div>

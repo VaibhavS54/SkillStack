@@ -6,61 +6,75 @@ import { toast } from "react-toastify";
 
 function StudentEnrolled() {
   const [enrolledStudents, setEnrolledStudents] = useState(null);
-  const {getToken, backendUrl, isEducator} = useContext(AppContext)
+  const { getToken, backendUrl, isEducator } = useContext(AppContext);
+
   const fetchEnrolledStudents = async () => {
     try {
       const token = await getToken();
-      console.log(token);
-      
-      const {data} = await axios.get(backendUrl+'/api/educator/enrolled-students',{
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-      })
-      
-      if(data.success){
-        setEnrolledStudents(data.enrolledStudents.reverse())
-      }else{
+
+      const { data } = await axios.get(
+        `${backendUrl}/api/educator/enrolled-students`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        setEnrolledStudents(data.enrolledStudents.reverse());
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
+
   useEffect(() => {
-    if(isEducator){
+    if (isEducator) {
       fetchEnrolledStudents();
     }
   }, [isEducator]);
+
   return enrolledStudents ? (
-    <div className="min-h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
-      <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md be-white border border-gray-500/20">
-        <table className="md:table-auto table-fixed w-full overflow-hidden pb-4">
-          <thead className="text-gray-900 border-b border-gray-500/20 text-sm text-left">
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-50 to-white p-6 md:p-10">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+        {/* Header */}
+        <div className="bg-blue-600 text-white px-6 py-4 text-lg font-semibold">
+          Enrolled Students
+        </div>
+
+        {/* Table */}
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
             <tr>
-              <th className="px-4 py-3 font-bold truncate">#</th>
-              <th className="px-4 py-3 font-bold truncate">Student Name</th>
-              <th className="px-4 py-3 font-bold truncate">Course Title</th>
-              <th className="px-4 py-3 font-bold truncate">Date</th>
+              <th className="px-6 py-3 font-semibold">#</th>
+              <th className="px-6 py-3 font-semibold">Student</th>
+              <th className="px-6 py-3 font-semibold">Course</th>
+              <th className="px-6 py-3 font-semibold">Date</th>
             </tr>
           </thead>
 
           <tbody>
             {enrolledStudents.map((item, index) => (
-              <tr key={index} className="border-b border-gray-500/20">
-                <td className="px-4 py-3 text-center hidden sm:table-cell">
-                  {index + 1}
-                </td>
-                <td className="md:px-4 px-2 py-3 flex items-center space-x-3">
+              <tr
+                key={index}
+                className="hover:bg-blue-50 transition-colors border-b border-gray-200"
+              >
+                <td className="px-6 py-4 text-gray-600">{index + 1}</td>
+                <td className="px-6 py-4 flex items-center space-x-3">
                   <img
                     src={item.student.imageUrl}
                     alt="student"
-                    className="w-9 h-9 rounded-full"
+                    className="w-10 h-10 rounded-full border border-gray-300"
                   />
-                  <span className="truncate">{item.student.name}</span>
+                  <span className="font-medium text-gray-800">
+                    {item.student.name}
+                  </span>
                 </td>
-                <td className="px-4 py-3 truncate">{item.courseTitle}</td>
-                <td className="px-4 py-3 hidden sm:table-cell">
+                <td className="px-6 py-4 text-gray-700">{item.courseTitle}</td>
+                <td className="px-6 py-4 text-gray-500">
                   {new Date(item.purchaseDate).toLocaleDateString()}
                 </td>
               </tr>
@@ -70,7 +84,7 @@ function StudentEnrolled() {
       </div>
     </div>
   ) : (
-    <Loading/>
+    <Loading />
   );
 }
 

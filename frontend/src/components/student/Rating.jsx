@@ -1,29 +1,42 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 
-const Rating = ({initialRating,onRate}) => {
-  const [rating , setRating] = useState(initialRating || 0);
-  const handleRating = (value)=>{
+const Rating = ({ initialRating = 0, onRate }) => {
+  const [rating, setRating] = useState(initialRating);
+  const [hover, setHover] = useState(null);
+
+  const handleRating = (value) => {
     setRating(value);
-    if(onRate) {
-      onRate(value);
-    }
-  }
-  useEffect(()=>{
-    if(initialRating) {
-      setRating(initialRating);
-    }
-  },[initialRating])
+    if (onRate) onRate(value);
+  };
+
+  useEffect(() => {
+    setRating(initialRating);
+  }, [initialRating]);
+
   return (
-    <div>
-      {
-        Array.from({ length: 5 }, (_, index) => {
-          const starValue = index + 1;
-          return (
-            <span key={index} onClick={()=> handleRating(starValue)} className={`text-xl sm:text-2xl cursor-pointer transition-colors ${starValue <= rating ? 'text-yellow-500': 'text-gray-400'}`}>&#9733;</span>
-          )
+    <div className="flex items-center gap-1">
+      {Array.from({ length: 5 }, (_, index) => {
+        const starValue = index + 1;
+        return (
+          <button
+            key={starValue}
+            type="button"
+            onClick={() => handleRating(starValue)}
+            onMouseEnter={() => setHover(starValue)}
+            onMouseLeave={() => setHover(null)}
+            className={`text-xl sm:text-2xl cursor-pointer transition-colors focus:outline-none ${
+              starValue <= (hover || rating)
+                ? "text-yellow-400 drop-shadow-sm"
+                : "text-gray-400"
+            }`}
+            aria-label={`Rate ${starValue} star${starValue > 1 ? "s" : ""}`}
+          >
+            ★
+          </button>
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default Rating
+export default Rating;

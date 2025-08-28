@@ -6,12 +6,12 @@ import Footer from '../../components/educator/Footer'
 
 function Educator() {
   return (
-    <div className='text-defalut min-h-screen bg-white'>
+    <div className='text-gray-200 min-h-screen bg-gray-950'>
       <Navbar/>
       <div className='flex'>
         <Sidebar/>
-        <div className='flex-1 p-4'>
-          {<Outlet/>}
+        <div className='flex-1 p-4 bg-gray-950'>
+          <Outlet/>
         </div>
       </div>
       <Footer/>

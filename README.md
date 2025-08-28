@@ -1,6 +1,6 @@
-# 🧑‍🏫 TutorGrid – Online Tutoring Platform
+# 🧑‍🏫 SkillStack – Online Tutoring Platform
 
-TutorGrid is a full-stack web application that connects students and tutors through an interactive, secure, and scalable platform. It features role-based dashboards, secure authentication, real-time payment integration, and dynamic course management — designed to streamline online learning.
+SkillStack is a full-stack web application that connects students and tutors through an interactive, secure, and scalable platform. It features role-based dashboards, secure authentication, real-time payment integration, and dynamic course management — designed to streamline online learning.
 
 ## 🚀 Features
 
