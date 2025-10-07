@@ -122,8 +122,7 @@ Make sure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/priyan2003/TutorGrid.git
-   cd tutorgrid
+   git clone 
    ```
 
 2. **Install Backend Dependencies**
